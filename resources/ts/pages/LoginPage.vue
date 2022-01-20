@@ -8,5 +8,5 @@ export default defineComponent({
 </script>
 
 <template>
-  <div>aaa</div>
+  <div>222</div>
 </template>
