@@ -47,6 +47,7 @@ Encore.setPublicPath('/assets')
 */
 Encore.addEntry('app', './resources/ts/app.ts')
 Encore.addEntry('login', './resources/ts/login.ts')
+Encore.addEntry('console', './resources/ts/console/app.ts')
 
 /*
 |--------------------------------------------------------------------------

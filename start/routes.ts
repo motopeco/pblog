@@ -22,6 +22,11 @@ import Route from '@ioc:Adonis/Core/Route'
 
 Route.get('/', 'HomeController.index')
 
+Route.group(() => {
+  Route.get('/', 'ConsoleController.index')
+  Route.get('/*', 'ConsoleController.index')
+}).prefix('/console')
+
 // Route.get('/', async ({ view }) => {
 //   return view.render('welcome')
 // })

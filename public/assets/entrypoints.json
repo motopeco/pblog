@@ -9,6 +9,11 @@
       "js": [
         "http://localhost:8080/assets/login.js"
       ]
+    },
+    "console": {
+      "js": [
+        "http://localhost:8080/assets/console.js"
+      ]
     }
   }
 }
