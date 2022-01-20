@@ -3,9 +3,7 @@
   "include": ["**/*.vue", "**/*"],
   "compilerOptions": {
     "paths": {
-      "~/*": [
-        "./resources/ts/*"
-      ]
+      "~/*": ["./resources/ts/*"]
     }
   }
 }

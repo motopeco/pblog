@@ -25,9 +25,7 @@
     "jsx": "preserve",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "typeRoots": [
-      "/types"
-    ],
+    "typeRoots": ["/types"],
     "lib": ["dom"]
   }
 }

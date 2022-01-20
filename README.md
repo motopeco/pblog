@@ -1,2 +1,3 @@
 # PBlog
-Adonis + Vueでの簡易Blog Webアプリケーション.
+
+Adonis + Vue での簡易 Blog Web アプリケーション.
