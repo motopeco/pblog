@@ -44,11 +44,13 @@
     "keyv": "^4.0.5",
     "luxon": "^2.3.0",
     "pg": "^8.7.1",
+    "phc-argon2": "^1.1.2",
     "proxy-addr": "^2.0.7",
     "quasar": "^2.4.11",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21",
     "sqlite3": "^5.0.2",
+    "uid": "^2.0.0",
     "vue": "^3.2.26",
     "vue-router": "4"
   }

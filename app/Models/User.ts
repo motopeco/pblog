@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import Encryption from '@ioc:Adonis/Core/Encryption'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -22,4 +23,18 @@ export default class User extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  public static async getUserIdForLogin(email: string) {
+    const users = await User.all()
+
+    return users
+      .map((user) => {
+        // メールアドレスは暗号化されているので、復号化
+        user.email = Encryption.decrypt(user.email) || ''
+        return user.toJSON()
+      })
+      .find((user) => {
+        return user.email === email
+      })
+  }
 }

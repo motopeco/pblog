@@ -21,6 +21,7 @@
 import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
   Route.get('posts', 'Api/BlogPageController.paginate')
+  Route.post('login', 'Api/AuthController.login')
 }).prefix('/api/v1')
 
 Route.group(() => {
