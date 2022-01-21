@@ -32,9 +32,9 @@ export default class CreateTestRecord extends BaseCommand {
     const { default: Post } = await import('App/Models/Post')
     const trx = await Database.transaction()
     try {
-      for (let i = 0; i < 123456789; i++) {
+      for (let i = 0; i < 12345; i++) {
         const post = new Post()
-        post.title = `タイトル_${i + 1}`
+        post.title = `タイトル_C_${i + 1}`
         post.useTransaction(trx)
         await post.save()
       }

@@ -20,8 +20,24 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 Route.group(() => {
-  Route.get('pages', 'Api/BlogPageController.paginate')
+  Route.get('posts', 'Api/BlogPageController.paginate')
 }).prefix('/api/v1')
+
+Route.group(() => {
+  Route.get('posts', 'Api/BlogManagerController.paginate')
+  Route.post('posts', 'Api/BlogManagerController.storePost')
+  Route.get('posts/:postId', 'Api/BlogManagerController.getPost')
+  Route.put('posts/:postId', 'Api/BlogManagerController.updatePost')
+  Route.delete('posts/:postId', 'Api/BlogManagerController.destroyPost')
+  Route.get('posts/:postId/histories', 'Api/BlogManagerController.postHistoryPaginate')
+  Route.get('posts/:postId/histories/:historyId', 'Api/BlogManagerController.getPostHistory')
+  Route.post('posts/:postId/histories/:historyId/copy', 'Api/BlogManagerController.copyPostHistory')
+  Route.get('categories', 'Api/BlogManagerController.categoryPaginate')
+  Route.post('categories', 'Api/BlogManagerController.storeCategory')
+  Route.get('categories/:id', 'Api/BlogManagerController.getCategory')
+  Route.put('categories/:id', 'Api/BlogManagerController.updateCategory')
+  Route.delete('categories/:id', 'Api/BlogManagerController.destroyCategory')
+}).prefix('/api/v1/console')
 
 Route.get('/', 'HomeController.index')
 
