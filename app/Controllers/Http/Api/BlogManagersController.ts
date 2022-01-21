@@ -1,4 +1,7 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import StoreCategoryValidator from 'App/Validators/StoreCategoryValidator'
+import Category from 'App/Models/Category'
+import Logger from '@ioc:Adonis/Core/Logger'
 
 /**
  * ブログ管理コンソール用API
@@ -54,7 +57,23 @@ export default class BlogManagersController {
   /**
    * カテゴリー作成
    */
-  public async storeCategory() {}
+  public async storeCategory(ctx: HttpContextContract) {
+    try {
+      const validator = new StoreCategoryValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const isExist = await Category.isExistName(payload.name)
+      if (isExist) {
+        return ctx.response.badRequest()
+      }
+
+      await Category.createCategory(payload.name)
+      return ctx.response.send('ok')
+    } catch (e) {
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 
   /**
    * カテゴリー情報取得
