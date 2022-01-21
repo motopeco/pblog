@@ -37,7 +37,9 @@ Route.group(() => {
   Route.get('categories/:id', 'Api/BlogManagerController.getCategory')
   Route.put('categories/:id', 'Api/BlogManagerController.updateCategory')
   Route.delete('categories/:id', 'Api/BlogManagerController.destroyCategory')
-}).prefix('/api/v1/console')
+})
+  .prefix('/api/v1/console')
+  .middleware('auth')
 
 Route.get('/', 'HomeController.index')
 
