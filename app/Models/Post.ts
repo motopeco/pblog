@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import Database from '@ioc:Adonis/Lucid/Database'
+import Cache from 'App/Services/Cache'
 
 export default class Post extends BaseModel {
   @column({ isPrimary: true })
@@ -47,7 +48,13 @@ export default class Post extends BaseModel {
    * TODO キャッシュを使用する（管理コンソールでページ削除、追加時にキャッシュを更新）。
    */
   public static async getBoundary() {
-    const q = Database.query()
+    const boundary = await Cache.getStore().get('boundary')
+    if (boundary) {
+      console.log('cache exist')
+      return boundary
+    }
+
+    const result = await Database.query()
       .select('x.*', Database.raw('row_number() over (order by created_at) + 1 page_number'))
       .from(function (db) {
         db.select(
@@ -65,8 +72,8 @@ export default class Post extends BaseModel {
       })
       .where('x.page_boundary', 1)
 
-    console.log(q.toSQL())
+    await Cache.getStore().set('boundary', result)
 
-    return q
+    return result
   }
 }
