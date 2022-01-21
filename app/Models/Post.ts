@@ -45,7 +45,6 @@ export default class Post extends BaseModel {
 
   /**
    * 境界値取得
-   * TODO キャッシュを使用する（管理コンソールでページ削除、追加時にキャッシュを更新）。
    */
   public static async getBoundary() {
     const boundary = await Cache.getStore().get('boundary')

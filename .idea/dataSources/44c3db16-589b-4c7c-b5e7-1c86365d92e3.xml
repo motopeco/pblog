@@ -3,7 +3,7 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.32">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>27591</IntrospectionStateNumber>
+      <IntrospectionStateNumber>27603</IntrospectionStateNumber>
       <ServerVersion>12.8</ServerVersion>
       <StartupTime>1642720211</StartupTime>
       <TimeZones>true ACDT
@@ -1431,7 +1431,7 @@ false posixrules
 13127||10|C|G
 13127||-9223372036854775808|U|G
 13127||10|U|G</Grants>
-      <IntrospectionStateNumber>27592</IntrospectionStateNumber>
+      <IntrospectionStateNumber>27604</IntrospectionStateNumber>
       <ObjectId>57718</ObjectId>
       <Relations>sequence|table|57719|57721|1
 sequence|table|57728|57730|1
@@ -4671,7 +4671,7 @@ sequence|table|57788|57790|1
     <schema id="250" parent="4" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>27592</IntrospectionStateNumber>
+      <IntrospectionStateNumber>27604</IntrospectionStateNumber>
       <ObjectId>2200</ObjectId>
       <StateNumber>275</StateNumber>
       <OwnerName>postgres</OwnerName>
@@ -5123,7 +5123,15 @@ sequence|table|57788|57790|1
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="311" parent="263" name="posts_pkey">
+    <index id="311" parent="263" name="posts_created_at_index">
+      <ClassIds>3127</ClassIds>
+      <ColNames>created_at</ColNames>
+      <CollationIds>0</CollationIds>
+      <ObjectId>57808</ObjectId>
+      <StateNumber>27601</StateNumber>
+      <AccessMethodId>403</AccessMethodId>
+    </index>
+    <key id="312" parent="263" name="posts_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>57770</ObjectId>
@@ -5131,7 +5139,7 @@ sequence|table|57788|57790|1
       <StateNumber>27587</StateNumber>
       <UnderlyingIndexId>57769</UnderlyingIndexId>
     </key>
-    <column id="312" parent="264" name="id">
+    <column id="313" parent="264" name="id">
       <DataType>bigint|0s</DataType>
       <DefaultExpression>nextval(&apos;users_id_seq&apos;::regclass)</DefaultExpression>
       <NotNull>1</NotNull>
@@ -5139,33 +5147,33 @@ sequence|table|57788|57790|1
       <StateNumber>27584</StateNumber>
       <TypeId>20</TypeId>
     </column>
-    <column id="313" parent="264" name="email">
+    <column id="314" parent="264" name="email">
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>27584</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="314" parent="264" name="password">
+    <column id="315" parent="264" name="password">
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>27584</StateNumber>
       <TypeId>25</TypeId>
     </column>
-    <column id="315" parent="264" name="created_at">
+    <column id="316" parent="264" name="created_at">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>4</Position>
       <StateNumber>27584</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <column id="316" parent="264" name="updated_at">
+    <column id="317" parent="264" name="updated_at">
       <DataType>timestamp with time zone|0s</DataType>
       <Position>5</Position>
       <StateNumber>27584</StateNumber>
       <TypeId>1184</TypeId>
     </column>
-    <index id="317" parent="264" name="users_pkey">
+    <index id="318" parent="264" name="users_pkey">
       <ClassIds>3124</ClassIds>
       <ColNames>id</ColNames>
       <CollationIds>0</CollationIds>
@@ -5176,7 +5184,7 @@ sequence|table|57788|57790|1
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="318" parent="264" name="users_pkey">
+    <key id="319" parent="264" name="users_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>57738</ObjectId>
