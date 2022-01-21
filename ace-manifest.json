@@ -1,5 +1,17 @@
 {
   "commands": {
+    "create:test_record": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/CreateTestRecord",
+      "commandName": "create:test_record",
+      "description": "create test data (database records).",
+      "args": [],
+      "aliases": [],
+      "flags": []
+    },
     "dump:rcfile": {
       "settings": {},
       "commandPath": "@adonisjs/core/build/commands/DumpRc",
