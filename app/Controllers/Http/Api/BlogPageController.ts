@@ -1,9 +1,21 @@
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import PageListValidator from 'App/Validators/PageListValidator'
+import Post from 'App/Models/Post'
 
 export default class BlogPageController {
   public async paginate(ctx: HttpContextContract) {
-    const qs = ctx.request.qs()
-    const query = this.getPaginateOption(qs)
+    try {
+      const validator = new PageListValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const qs = ctx.request.qs()
+      const query = this.getPaginateOption(qs)
+
+      const paginate = await Post.getPaginate(query)
+      ctx.response.send(paginate)
+    } catch (e) {
+      ctx.response.badRequest(e.messages)
+    }
   }
 
   private getPaginateOption(queryString): BlogPagePaginateQuery {

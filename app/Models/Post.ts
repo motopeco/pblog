@@ -42,8 +42,12 @@ export default class Post extends BaseModel {
     return result
   }
 
+  /**
+   * 境界値取得
+   * TODO キャッシュを使用する（管理コンソールでページ削除、追加時にキャッシュを更新）。
+   */
   public static async getBoundary() {
-    return Database.query()
+    const q = Database.query()
       .select('x.*', Database.raw('row_number() over (order by created_at) + 1 page_number'))
       .from(function (db) {
         db.select(
@@ -60,5 +64,9 @@ export default class Post extends BaseModel {
           .as('x')
       })
       .where('x.page_boundary', 1)
+
+    console.log(q.toSQL())
+
+    return q
   }
 }

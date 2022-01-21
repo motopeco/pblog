@@ -19,6 +19,9 @@
 */
 
 import Route from '@ioc:Adonis/Core/Route'
+Route.group(() => {
+  Route.get('pages', 'Api/BlogPageController.paginate')
+}).prefix('/api/v1')
 
 Route.get('/', 'HomeController.index')
 
