@@ -1,7 +1,10 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
-import Database from '@ioc:Adonis/Lucid/Database'
+import Database, { TransactionClientContract } from '@ioc:Adonis/Lucid/Database'
 import Cache from 'App/Services/Cache'
+import PostHistory from 'App/Models/PostHistory'
+import Category from 'App/Models/Category'
+import CategoryPost from 'App/Models/CategoryPost'
 
 export default class Post extends BaseModel {
   @column({ isPrimary: true })
@@ -9,6 +12,9 @@ export default class Post extends BaseModel {
 
   @column()
   public title: string
+
+  @column()
+  public currentPostHistoryId: number
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
@@ -74,5 +80,44 @@ export default class Post extends BaseModel {
     await Cache.getStore().set('boundary', result)
 
     return result
+  }
+
+  /**
+   * ポスト作成
+   * @param title タイトル
+   * @param content 本文
+   * @param categories カテゴリ情報
+   * @param trx トランザクション
+   */
+  public static async createPost(
+    title: string,
+    content: string,
+    categories: { name: string }[],
+    trx: TransactionClientContract
+  ) {
+    // 基本データ作成
+    const post = new Post()
+    post.useTransaction(trx)
+    post.title = title
+    await post.save()
+
+    const history = new PostHistory()
+    history.useTransaction(trx)
+    history.postId = post.id
+    history.content = content
+    await history.save()
+
+    post.currentPostHistoryId = history.id
+    await post.save()
+
+    // カテゴリー作成、ポストと関連付け
+    for (const { name } of categories) {
+      let category = await Category.getByName(name, trx)
+      if (!category) {
+        category = await Category.createCategory(name)
+      }
+
+      await CategoryPost.createCategoryPost(category.id, post.id, trx)
+    }
   }
 }

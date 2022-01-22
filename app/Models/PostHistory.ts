@@ -5,6 +5,12 @@ export default class PostHistory extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
+  @column()
+  public postId: number
+
+  @column()
+  public content: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 

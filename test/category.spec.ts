@@ -93,6 +93,26 @@ test.group('Category', (group) => {
     }
   })
 
+  test('createCategory with transaction', async (assert) => {
+    const category1 = await Category.findBy('name', 'foobar')
+    assert.isNull(category1)
+
+    const trx = await Database.transaction()
+
+    await Category.createCategory('foobar', trx)
+
+    await trx.commit()
+
+    const category2 = await Category.findBy('name', 'foobar')
+    assert.isNotNull(category2)
+
+    if (category2) {
+      assert.equal(category2.name, 'foobar')
+    } else {
+      assert.fail('category2 is null')
+    }
+  })
+
   test('createCategory exist name', async (assert) => {
     const category = new Category()
     category.name = 'foobar'

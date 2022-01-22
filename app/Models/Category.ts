@@ -44,11 +44,20 @@ export default class Category extends BaseModel {
   /**
    * カテゴリ作成
    * @param name 名前
+   * @param trx トランザクション
+   * @return Category
    */
-  public static async createCategory(name: string) {
+  public static async createCategory(name: string, trx?: TransactionClientContract) {
     const category = new Category()
+
+    if (trx) {
+      category.useTransaction(trx)
+    }
+
     category.name = name
     await category.save()
+
+    return category
   }
 
   /**

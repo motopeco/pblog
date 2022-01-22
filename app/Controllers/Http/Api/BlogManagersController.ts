@@ -4,6 +4,8 @@ import Category from 'App/Models/Category'
 import Logger from '@ioc:Adonis/Core/Logger'
 import Database from '@ioc:Adonis/Lucid/Database'
 import UpdateCategoryValidator from 'App/Validators/UpdateCategoryValidator'
+import StorePostValidator from 'App/Validators/StorePostValidator'
+import Post from 'App/Models/Post'
 
 /**
  * ブログ管理コンソール用API
@@ -22,7 +24,23 @@ export default class BlogManagersController {
   /**
    * ポスト作成
    */
-  public async storePost() {}
+  public async storePost(ctx: HttpContextContract) {
+    const trx = await Database.transaction()
+
+    try {
+      const validator = new StorePostValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      await Post.createPost(payload.title, payload.content, payload.categories, trx)
+
+      await trx.commit()
+      return ctx.response.send('ok')
+    } catch (e) {
+      await trx.rollback()
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 
   /**
    * ポスト情報取得
