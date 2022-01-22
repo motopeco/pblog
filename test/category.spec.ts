@@ -149,4 +149,29 @@ test.group('Category', (group) => {
 
     await trx.rollback()
   })
+
+  test('destroyCategory not exist', async (assert) => {
+    const trx = await Database.transaction()
+    try {
+      await Category.destroyCategory(9999, trx)
+    } catch (e) {
+      assert.fail('must not failed')
+    }
+    await trx.rollback()
+  })
+
+  test('destroyCategory exist', async (assert) => {
+    const category1 = new Category()
+    category1.name = 'foobar'
+    await category1.save()
+
+    const trx = await Database.transaction()
+
+    await Category.destroyCategory(category1.id, trx)
+
+    const category2 = await Category.find(category1.id)
+    assert.isNull(category2)
+
+    await trx.rollback()
+  })
 })

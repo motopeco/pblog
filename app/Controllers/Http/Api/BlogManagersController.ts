@@ -121,6 +121,30 @@ export default class BlogManagersController {
 
   /**
    * カテゴリー削除
+   * ポストとの関連付けも削除される。
    */
-  public async destroyCategory() {}
+  public async destroyCategory(ctx: HttpContextContract) {
+    const trx = await Database.transaction()
+
+    try {
+      const validator = new UpdateCategoryValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const category = await Category.getByName(payload.name, trx)
+      if (!category) {
+        await trx.rollback()
+        return ctx.response.notFound()
+      }
+
+      await Category.destroyCategory(category.id, trx)
+
+      await trx.commit()
+
+      return ctx.response.send('ok')
+    } catch (e) {
+      await trx.rollback()
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 }

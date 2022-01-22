@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import { TransactionClientContract } from '@ioc:Adonis/Lucid/Database'
+import CategoryPost from 'App/Models/CategoryPost'
 
 export default class Category extends BaseModel {
   @column({ isPrimary: true })
@@ -62,5 +63,16 @@ export default class Category extends BaseModel {
     }
 
     return q.first()
+  }
+
+  /**
+   * カテゴリー削除
+   * ポストとの関連付けも削除する。
+   * @param id カテゴリ.ID
+   * @param trx トランザクション
+   */
+  public static async destroyCategory(id: number, trx: TransactionClientContract) {
+    await CategoryPost.query().useTransaction(trx).where('category_id', id).delete()
+    await Category.query().useTransaction(trx).where('id', id).delete()
   }
 }
