@@ -2,6 +2,8 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import StoreCategoryValidator from 'App/Validators/StoreCategoryValidator'
 import Category from 'App/Models/Category'
 import Logger from '@ioc:Adonis/Core/Logger'
+import Database from '@ioc:Adonis/Lucid/Database'
+import UpdateCategoryValidator from 'App/Validators/UpdateCategoryValidator'
 
 /**
  * ブログ管理コンソール用API
@@ -84,7 +86,38 @@ export default class BlogManagersController {
   /**
    * カテゴリー更新
    */
-  public async updateCategory() {}
+  public async updateCategory(ctx: HttpContextContract) {
+    const trx = await Database.transaction()
+
+    try {
+      const validator = new UpdateCategoryValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const category = await Category.getByName(payload.name, trx)
+      if (!category) {
+        await trx.rollback()
+        return ctx.response.notFound()
+      }
+
+      const isExist = await Category.isExistName(payload.name, category.id, trx)
+      if (isExist) {
+        await trx.rollback()
+        return ctx.response.badRequest()
+      }
+
+      category.name = payload.name
+      category.useTransaction(trx)
+      await category.save()
+
+      await trx.commit()
+
+      return ctx.response.send('ok')
+    } catch (e) {
+      await trx.rollback()
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 
   /**
    * カテゴリー削除
