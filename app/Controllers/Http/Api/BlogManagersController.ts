@@ -79,7 +79,27 @@ export default class BlogManagersController {
   /**
    * ポスト削除
    */
-  public async destroyPost() {}
+  public async destroyPost(ctx: HttpContextContract) {
+    const trx = await Database.transaction()
+    const postId = ctx.params.postId as number
+
+    try {
+      const post = await Post.getPostById(postId, trx)
+      if (!post) {
+        await trx.rollback()
+        return ctx.response.notFound()
+      }
+
+      await Post.destroyPost(post.id, trx)
+
+      await trx.commit()
+      return ctx.response.send('ok')
+    } catch (e) {
+      await trx.rollback()
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 
   /**
    * ポスト履歴一覧表示用

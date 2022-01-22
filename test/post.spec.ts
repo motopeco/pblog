@@ -278,4 +278,31 @@ test.group('Post', (group) => {
 
     assert.equal(history.content, newContent)
   })
+
+  test('destroyPost', async (assert) => {
+    const trx = await Database.transaction()
+
+    const title = 'タイトル'
+    const content = '本文XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const categoryDatum = [{ name: 'foobar' }, { name: 'hogehoge' }]
+
+    const p = await Post.createPost(title, content, categoryDatum, trx)
+
+    await trx.commit()
+
+    const trx2 = await Database.transaction()
+
+    await Post.destroyPost(p.id, trx2)
+
+    await trx2.commit()
+
+    const post = await Post.getPostById(p.id)
+    assert.isNull(post)
+
+    const histories = await PostHistory.query().where('post_id', p.id)
+    assert.equal(histories.length, 0)
+
+    const categoryPosts = await CategoryPost.query().where('post_id', p.id)
+    assert.equal(categoryPosts.length, 0)
+  })
 })

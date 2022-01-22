@@ -174,4 +174,15 @@ export default class Post extends BaseModel {
       await CategoryPost.createCategoryPost(category.id, id, trx)
     }
   }
+
+  /**
+   * ポスト削除
+   * @param id
+   * @param trx
+   */
+  public static async destroyPost(id: number, trx: TransactionClientContract) {
+    await CategoryPost.query().useTransaction(trx).where('post_id', id).delete()
+    await PostHistory.query().useTransaction(trx).where('post_id', id).delete()
+    await Post.query().useTransaction(trx).where('id', id).delete()
+  }
 }
