@@ -114,10 +114,64 @@ export default class Post extends BaseModel {
     for (const { name } of categories) {
       let category = await Category.getByName(name, trx)
       if (!category) {
-        category = await Category.createCategory(name)
+        category = await Category.createCategory(name, trx)
       }
 
       await CategoryPost.createCategoryPost(category.id, post.id, trx)
+    }
+
+    return post
+  }
+
+  /**
+   * ポスト取得
+   * @param id ポスト.ID
+   * @param trx トランザクション。FOR UPDATE NOWAIT で実行。
+   */
+  public static async getPostById(id: number, trx?: TransactionClientContract) {
+    const q = Post.query().where('id', id)
+    if (trx) {
+      q.useTransaction(trx).forUpdate().noWait()
+    }
+
+    return q.first()
+  }
+
+  /**
+   * ポスト更新
+   * @param id
+   * @param title
+   * @param content
+   * @param categories
+   * @param trx
+   */
+  public static async updatePost(
+    id: number,
+    title: string,
+    content: string,
+    categories: { name: string }[],
+    trx: TransactionClientContract
+  ) {
+    const history = new PostHistory()
+    history.useTransaction(trx)
+    history.postId = id
+    history.content = content
+    await history.save()
+
+    await Post.query().where('id', id).update({
+      title: title,
+      currentPostHistoryId: history.id,
+    })
+
+    await CategoryPost.query().useTransaction(trx).where('post_id', id).delete()
+
+    for (const { name } of categories) {
+      let category = await Category.getByName(name, trx)
+      if (!category) {
+        category = await Category.createCategory(name, trx)
+      }
+
+      await CategoryPost.createCategoryPost(category.id, id, trx)
     }
   }
 }

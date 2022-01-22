@@ -6,6 +6,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import UpdateCategoryValidator from 'App/Validators/UpdateCategoryValidator'
 import StorePostValidator from 'App/Validators/StorePostValidator'
 import Post from 'App/Models/Post'
+import UpdatePostValidator from 'App/Validators/UpdatePostValidator'
 
 /**
  * ブログ管理コンソール用API
@@ -50,7 +51,30 @@ export default class BlogManagersController {
   /**
    * ポスト更新
    */
-  public async updatePost() {}
+  public async updatePost(ctx: HttpContextContract) {
+    const trx = await Database.transaction()
+    const postId = ctx.params.postId as number
+
+    try {
+      const validator = new UpdatePostValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const post = await Post.getPostById(postId, trx)
+      if (!post) {
+        await trx.rollback()
+        return ctx.response.notFound()
+      }
+
+      await Post.updatePost(post.id, payload.title, payload.content, payload.categories, trx)
+
+      await trx.commit()
+      return ctx.response.send('ok')
+    } catch (e) {
+      await trx.rollback()
+      Logger.error(e.messages)
+      return ctx.response.badRequest()
+    }
+  }
 
   /**
    * ポスト削除

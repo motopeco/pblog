@@ -151,4 +151,131 @@ test.group('Post', (group) => {
       .first()
     assert.isNotNull(categoryPost2)
   })
+
+  test('getPostById', async (assert) => {
+    const post = await Post.getPostById(1)
+    assert.isNull(post)
+
+    const trx = await Database.transaction()
+
+    const title = 'タイトル'
+    const content = '本文XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const p = await Post.createPost(title, content, [], trx)
+
+    await trx.commit()
+
+    const post2 = await Post.getPostById(p.id)
+    assert.isNotNull(post2)
+
+    if (post2) {
+      assert.equal(post2.title, title)
+    } else {
+      assert.fail('not null')
+    }
+  })
+
+  test('getPostById with transaction', async (assert) => {
+    const trx = await Database.transaction()
+
+    const post = await Post.getPostById(1, trx)
+    assert.isNull(post)
+
+    const title = 'タイトル'
+    const content = '本文XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const p = await Post.createPost(title, content, [], trx)
+
+    const post2 = await Post.getPostById(p.id, trx)
+    assert.isNotNull(post2)
+
+    if (post2) {
+      assert.equal(post2.title, title)
+    } else {
+      assert.fail('not null')
+    }
+  })
+
+  test('updatePost', async (assert) => {
+    const trx = await Database.transaction()
+
+    const title = 'タイトル'
+    const content = '本文XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const categoryDatum = [{ name: 'foobar' }, { name: 'hogehoge' }]
+
+    const p = await Post.createPost(title, content, categoryDatum, trx)
+
+    await trx.commit()
+
+    const trx2 = await Database.transaction()
+
+    const newTitle = 'タイトル2'
+    const newContent = '本文2XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    await Post.updatePost(p.id, newTitle, newContent, [], trx2)
+
+    await trx2.commit()
+
+    const post = await Post.find(p.id)
+    if (!post) {
+      assert.fail('not null')
+      return
+    }
+
+    assert.equal(post.title, newTitle)
+
+    const categoryPosts = await CategoryPost.query().where('post_id', p.id)
+    assert.equal(categoryPosts.length, 0)
+
+    const histories = await PostHistory.query().where('post_id', p.id).orderBy('id')
+    assert.equal(histories.length, 2)
+
+    const history = await PostHistory.find(post.currentPostHistoryId)
+    if (!history) {
+      assert.fail('not null')
+      return
+    }
+
+    assert.equal(history.content, newContent)
+  })
+
+  test('updatePost with category', async (assert) => {
+    const trx = await Database.transaction()
+
+    const title = 'タイトル'
+    const content = '本文XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const categoryDatum = [{ name: 'foobar' }, { name: 'hogehoge' }]
+
+    const p = await Post.createPost(title, content, categoryDatum, trx)
+
+    await trx.commit()
+
+    const trx2 = await Database.transaction()
+
+    const newTitle = 'タイトル2'
+    const newContent = '本文2XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+    const newCategoryDatum = [{ name: 'sample' }]
+    await Post.updatePost(p.id, newTitle, newContent, newCategoryDatum, trx2)
+
+    await trx2.commit()
+
+    const post = await Post.find(p.id)
+    if (!post) {
+      assert.fail('not null')
+      return
+    }
+
+    assert.equal(post.title, newTitle)
+
+    const categoryPosts = await CategoryPost.query().where('post_id', p.id)
+    assert.equal(categoryPosts.length, 1)
+
+    const histories = await PostHistory.query().where('post_id', p.id).orderBy('id')
+    assert.equal(histories.length, 2)
+
+    const history = await PostHistory.find(post.currentPostHistoryId)
+    if (!history) {
+      assert.fail('not null')
+      return
+    }
+
+    assert.equal(history.content, newContent)
+  })
 })
