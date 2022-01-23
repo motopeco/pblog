@@ -36,4 +36,14 @@ export default class AuthController {
       return ctx.response.badRequest('login failed.')
     }
   }
+
+  public async logout(ctx: HttpContextContract) {
+    try {
+      await ctx.auth.logout()
+      return ctx.response.send('ok')
+    } catch (e) {
+      Logger.error(e.messages)
+      return ctx.response.badRequest('logout failed.')
+    }
+  }
 }

@@ -45,6 +45,26 @@ export function getLogin(
   }
 }
 
+export function getLogout($q: QVueGlobals, axios, $router) {
+  return async function () {
+    try {
+      $q.loading.show()
+
+      await axios.post('/api/v1/logout')
+
+      await $router.push('/console/login')
+    } catch (e) {
+      $q.notify({
+        message: 'ログアウトに失敗しました',
+        position: 'top',
+        color: 'warning',
+      })
+    } finally {
+      $q.loading.hide()
+    }
+  }
+}
+
 export const loginRules = {
   email: [
     (val: string) => {

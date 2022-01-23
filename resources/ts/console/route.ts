@@ -2,6 +2,9 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '@/console/pages/Home.vue'
 import Layout from '@/console/pages/Layout.vue'
 import Login from '@/console/pages/Login.vue'
+import Post from '@/console/pages/Post.vue'
+import Category from '@/console/pages/Category.vue'
+import User from '@/console/pages/User.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -15,6 +18,18 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         component: Home,
+      },
+      {
+        path: 'posts',
+        component: Post,
+      },
+      {
+        path: 'categories',
+        component: Category,
+      },
+      {
+        path: 'users',
+        component: User,
       },
     ],
   },

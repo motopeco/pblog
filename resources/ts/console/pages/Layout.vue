@@ -1,9 +1,13 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import SideBar from '@/console/components/SideBar.vue'
 
 export default defineComponent({
   name: 'LayoutPage',
+  components: {
+    SideBar,
+  },
   setup() {
     const leftDrawerOpen = ref(false)
 
@@ -37,6 +41,7 @@ export default defineComponent({
 
     <q-drawer v-if="!isLoginPage" v-model="leftDrawerOpen" show-if-above side="left" bordered>
       <!-- drawer content -->
+      <SideBar />
     </q-drawer>
 
     <q-page-container>
