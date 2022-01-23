@@ -44,10 +44,14 @@ Route.group(() => {
 
 Route.get('/', 'HomeController.index')
 
+Route.get('/console/login', 'ConsoleController.index')
+
 Route.group(() => {
   Route.get('/', 'ConsoleController.index')
   Route.get('/*', 'ConsoleController.index')
-}).prefix('/console')
+})
+  .prefix('/console')
+  .middleware('auth')
 
 // Route.get('/', async ({ view }) => {
 //   return view.render('welcome')

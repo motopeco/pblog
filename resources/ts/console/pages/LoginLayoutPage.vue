@@ -1,25 +1,9 @@
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'LayoutPage',
-  setup() {
-    const leftDrawerOpen = ref(false)
-
-    const $route = useRoute()
-    const isLoginPage = computed(() => {
-      return $route.path === '/console/login'
-    })
-
-    return {
-      isLoginPage,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
-    }
-  },
+  name: 'LoginLayoutPage',
+  setup() {},
 })
 </script>
 
@@ -27,17 +11,12 @@ export default defineComponent({
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn v-if="!isLoginPage" dense flat round icon="mdi-menu" @click="toggleLeftDrawer" />
         <q-toolbar-title>
           <q-avatar> {} </q-avatar>
-          aa
+          Title {{ $route }}
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
-
-    <q-drawer v-if="!isLoginPage" v-model="leftDrawerOpen" show-if-above side="left" bordered>
-      <!-- drawer content -->
-    </q-drawer>
 
     <q-page-container>
       <router-view />
