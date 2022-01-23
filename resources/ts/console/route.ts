@@ -1,20 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import HomePage from '@/console/pages/HomePage.vue'
-import LayoutPage from '@/console/pages/LayoutPage.vue'
-import LoginPage from '@/console/pages/LoginPage.vue'
+import Home from '@/console/pages/Home.vue'
+import Layout from '@/console/pages/Layout.vue'
+import Login from '@/console/pages/Login.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/console',
-    component: LayoutPage,
+    component: Layout,
     children: [
       {
         path: 'login',
-        component: LoginPage,
+        component: Login,
       },
       {
         path: '',
-        component: HomePage,
+        component: Home,
       },
     ],
   },
