@@ -28,19 +28,26 @@ export default class Post extends BaseModel {
       datum: [],
       page: query.p,
       totalPage: 0,
+      sortBy: query.sortBy,
+      descending: query.descending,
     }
 
-    const boundaries = await this.getBoundary()
+    const ascDesc = query.descending ? 'desc' : 'asc'
+    const ascDescOperator = query.descending ? '<' : '>'
+
+    console.log(ascDesc)
+
+    const boundaries = await this.getBoundary(ascDesc)
     result.totalPage = boundaries.length + 1
 
     const [{ count }] = await Database.query().from('posts').count('id')
     result.total = parseInt(count)
 
-    const q = Database.query().select('*').from('posts').orderBy('created_at').limit(10)
+    const q = Database.query().select('*').from('posts').orderBy('created_at', ascDesc).limit(10)
     if (query.p > 1) {
       const boundary = boundaries[query.p - 2]
       if (boundary) {
-        q.where('created_at', '>', boundary.created_at)
+        q.where('created_at', ascDescOperator, boundary.created_at)
       }
     }
 
@@ -52,19 +59,23 @@ export default class Post extends BaseModel {
   /**
    * 境界値取得
    */
-  public static async getBoundary() {
-    const boundary = await Cache.getStore().get('boundary')
+  public static async getBoundary(sortBy: 'asc' | 'desc') {
+    const boundary = await Cache.getStore().get(`boundary-${sortBy}`)
     if (boundary) {
       console.log('cache exist')
+      console.log(boundary)
       return boundary
     }
 
     const result = await Database.query()
-      .select('x.*', Database.raw('row_number() over (order by created_at) + 1 page_number'))
+      .select(
+        'x.*',
+        Database.raw(`row_number() over (order by created_at ${sortBy}) + 1 page_number`)
+      )
       .from(function (db) {
         db.select(
           Database.raw(
-            'case mod(row_number() over (order by created_at), 10) ' +
+            `case mod(row_number() over (order by created_at ${sortBy}), 10) ` +
               'when 0 then 1 ' +
               'else 0 ' +
               'end page_boundary'
@@ -72,12 +83,12 @@ export default class Post extends BaseModel {
           'posts.*'
         )
           .from('posts')
-          .orderBy('created_at')
+          .orderBy('created_at', sortBy)
           .as('x')
       })
       .where('x.page_boundary', 1)
 
-    await Cache.getStore().set('boundary', result)
+    await Cache.getStore().set(`boundary-${sortBy}`, result)
 
     return result
   }

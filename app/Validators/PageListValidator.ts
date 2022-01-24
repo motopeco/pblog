@@ -25,6 +25,8 @@ export default class PageListValidator {
    */
   public schema = schema.create({
     p: schema.number([rules.unsigned()]),
+    sortBy: schema.enum(['created_at'] as const),
+    descending: schema.boolean(),
   })
 
   /**

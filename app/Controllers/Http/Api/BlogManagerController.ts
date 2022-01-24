@@ -7,15 +7,27 @@ import UpdateCategoryValidator from 'App/Validators/UpdateCategoryValidator'
 import StorePostValidator from 'App/Validators/StorePostValidator'
 import Post from 'App/Models/Post'
 import UpdatePostValidator from 'App/Validators/UpdatePostValidator'
+import PageListManagerValidator from 'App/Validators/PageListManagerValidator'
 
 /**
  * ブログ管理コンソール用API
  */
-export default class BlogManagersController {
+export default class BlogManagerController {
   /**
    * ポスト一覧表示用
    */
-  public async paginate() {}
+  public async paginate(ctx: HttpContextContract) {
+    try {
+      const validator = new PageListManagerValidator(ctx)
+      const payload = await ctx.request.validate(validator)
+
+      const paginate = await Post.getPaginate(payload)
+      ctx.response.send(paginate)
+    } catch (e) {
+      Logger.error(e.messages)
+      ctx.response.badRequest(e.messages)
+    }
+  }
 
   /**
    * カテゴリ一覧表示用

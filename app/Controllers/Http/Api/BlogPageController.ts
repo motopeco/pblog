@@ -13,26 +13,10 @@ export default class BlogPageController {
       const validator = new PageListValidator(ctx)
       const payload = await ctx.request.validate(validator)
 
-      const qs = ctx.request.qs()
-      const query = this.getPaginateOption(qs)
-
-      const paginate = await Post.getPaginate(query)
+      const paginate = await Post.getPaginate(payload)
       ctx.response.send(paginate)
     } catch (e) {
       ctx.response.badRequest(e.messages)
     }
-  }
-
-  private getPaginateOption(queryString): BlogPagePaginateQuery {
-    const qs: BlogPagePaginateQuery = {
-      p: 1,
-    }
-
-    if (queryString.p && !isNaN(queryString.p)) {
-      const p = parseInt(queryString.p)
-      qs.p = p > 0 ? p : 1
-    }
-
-    return qs
   }
 }

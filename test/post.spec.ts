@@ -15,7 +15,7 @@ test.group('Post', (group) => {
   })
 
   test('post boundary', async () => {
-    const data = await Post.getPaginate({ p: 1 })
+    const data = await Post.getPaginate({ p: 1, sortBy: 'created_at', descending: false })
     console.log(data)
   })
 
