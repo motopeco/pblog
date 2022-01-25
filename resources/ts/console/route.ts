@@ -5,6 +5,7 @@ import Login from '@/console/pages/Login.vue'
 import Post from '@/console/pages/Post.vue'
 import Category from '@/console/pages/Category.vue'
 import User from '@/console/pages/User.vue'
+import Create from '@/console/pages/posts/Create.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -22,6 +23,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'posts',
         component: Post,
+      },
+      {
+        path: 'posts/create',
+        component: Create,
       },
       {
         path: 'categories',
